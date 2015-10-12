@@ -1,0 +1,32 @@
+#include "ros/ros.h"
+#include "geometry_msgs/Twist.h"
+#include "nav_msgs/Odometry.h"
+
+double currentX;
+double currentY;
+double currentTheta;
+
+
+void gpsCallback(const nav_msgs::Odometry::ConstPtr &msg)
+{
+	currentX = msg->pose.pose.position.x;
+	currentY = msg->pose.pose.position.y;
+	currentTheta = msg->pose.pose.orientation.w;
+}
+
+int main(int argc, char **argv)
+{
+	double iteration_rate = 40; //iteration rate at 40 Hz
+	ros::init(argc, argv, "PathTrackingGPS");
+	ros::NodeHandle n;
+	ros::Publisher pubCmd = n.advertise<geometry_msgs::Twist>("husky/cmd_vel", 1000);
+
+	ros::Subscriber subGps = n.subscribe("navsat/enu", 1000, gpsCallback);
+
+	ros::Rate loop_rate(iteration_rate);
+
+	double stopThresh = .2;
+
+
+	while (ros::ok() ) 
+}
